@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCC Region — Monthly Store Evolution vs LY</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0e0e0e;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    padding: 32px 24px;
+    color: #ccc;
+  }
+
+  .header { max-width: 1200px; margin: 0 auto 24px; }
+  .header h1 {
+    font-size: 1.8rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    color: #d4b483;
+    text-transform: uppercase;
+    display: inline;
+  }
+  .header .sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: #666;
+    letter-spacing: 0.1em;
+    margin-left: 14px;
+  }
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, #d4b483 0%, transparent 80%);
+    margin: 10px 0 14px;
+  }
+
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 5px;
+  }
+  .legend-swatch {
+    width: 11px; height: 11px; border-radius: 2px;
+  }
+  .legend-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: #777;
+  }
+
+  .table-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow-x: auto;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.60rem;
+    font-weight: 400;
+    color: #555;
+    text-align: center;
+    padding: 3px 2px 8px;
+    letter-spacing: 0.06em;
+  }
+  th.store-head {
+    text-align: left;
+    padding-left: 6px;
+    min-width: 190px;
+  }
+  th.group-head {
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #333;
+  }
+  th.group-head.cur { color: #d4b483; border-bottom-color: #d4b483; }
+  th.ytd-head { color: #d4b483; font-weight: 600; }
+
+  td {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.70rem;
+    text-align: center;
+    padding: 5px 3px;
+    border-right: 1px solid rgba(255,255,255,0.05);
+    white-space: nowrap;
+    min-width: 44px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  td.store-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.84rem;
+    font-weight: 400;
+    color: #c8c8c8;
+    text-align: left;
+    padding-left: 6px;
+    padding-right: 12px;
+    border-right: 1px solid #222;
+    letter-spacing: 0.02em;
+  }
+  td.ytd { font-weight: 700; font-size: 0.74rem; border-right: none; }
+
+  tr:hover td { filter: brightness(1.1); }
+
+  /* Color classes */
+  .vpos  { background: rgba(34,139,34,0.85);  color: #fff !important; }
+  .pos   { background: rgba(60,179,60,0.70);  color: #fff !important; }
+  .lpos  { background: rgba(100,200,100,0.45); color: #1a4a1a !important; }
+  .zero  { background: rgba(180,180,180,0.25); color: #666 !important; }
+  .lneg  { background: rgba(220,90,90,0.35);  color: #5a1010 !important; }
+  .neg   { background: rgba(210,50,50,0.60);  color: #fff !important; }
+  .vneg  { background: rgba(170,10,10,0.85);  color: #fff !important; }
+  .null  { background: transparent; color: #555 !important; }
+
+  .footer {
+    max-width: 1200px;
+    margin: 16px auto 0;
+    display: flex;
+    justify-content: space-between;
+  }
+  .footer span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    color: #3a3a3a;
+    letter-spacing: 0.08em;
+  }
+
+  /* Print button */
+  .print-btn {
+    display: block;
+    margin: 0 auto 28px;
+    max-width: 1200px;
+    text-align: right;
+  }
+  .print-btn button {
+    background: #d4b483;
+    color: #0e0e0e;
+    border: none;
+    padding: 8px 22px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .print-btn button:hover { background: #e8cc9a; }
+
+  /* Print overrides */
+  @media print {
+    body { background: #0e0e0e !important; padding: 12px; }
+    .print-btn { display: none; }
+    table { font-size: 0.62rem; }
+    td { padding: 4px 2px; min-width: 36px; }
+    td.store-name { font-size: 0.75rem; }
+    @page {
+      size: A3 landscape;
+      margin: 10mm;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="print-btn">
+  <button onclick="window.print()">⬇ Export as PDF</button>
+</div>
+
+<div class="header">
+  <h1>MCC Region</h1>
+  <span class="sub">Monthly Store Evolution vs LY</span>
+  <div class="divider"></div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch vpos"></div><span class="legend-label">&gt; +20%</span></div>
+    <div class="legend-item"><div class="legend-swatch pos"></div><span class="legend-label">+10 to +20%</span></div>
+    <div class="legend-item"><div class="legend-swatch lpos"></div><span class="legend-label">0 to +10%</span></div>
+    <div class="legend-item"><div class="legend-swatch lneg"></div><span class="legend-label">0 to −10%</span></div>
+    <div class="legend-item"><div class="legend-swatch neg"></div><span class="legend-label">−10 to −25%</span></div>
+    <div class="legend-item"><div class="legend-swatch vneg"></div><span class="legend-label">&lt; −25%</span></div>
+  </div>
+</div>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr>
+      <th class="store-head" rowspan="2"></th>
+      <th colspan="12" class="group-head">2025 vs 2024</th>
+      <th colspan="4" class="group-head cur">2026 vs 2025</th>
+      <th class="ytd-head" rowspan="2">YTD</th>
+    </tr>
+    <tr>
+      <th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th>
+      <th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th>
+      <th style="color:#a08840">Jan</th><th style="color:#a08840">Feb</th>
+      <th style="color:#a08840">Mar</th><th style="color:#a08840">Apr</th>
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+</div>
+
+<div class="footer">
+  <span>GUCCI MCC · 16 ACTIVE STORES · DATA: MONTHLY STORE EVOL VS LY</span>
+  <span>YTD THROUGH APR 2026</span>
+</div>
+
+<script>
+const stores = [
+  { name: "Cancun — La Isla",        data: [null,null,null,null,null,5,-20,-17,-31,-22,-27,-43,-29,-40,-36,-45], ytd: -37 },
+  { name: "GDL — Midtown",           data: [-7,-46,-3,-24,-25,-22,-36,-26,-25,-46,-24,-40,-44,-22,-62,-41],      ytd: -44 },
+  { name: "GDL — PdH",               data: [3,-34,-19,-34,-4,-18,-23,-19,-14,-16,-12,-32,-27,-10,-13,-15],       ytd: -17 },
+  { name: "CDMX — Artz Pedregal",    data: [-18,-54,-35,-13,8,-18,-7,-5,-15,9,3,-12,-14,9,-26,-18],             ytd: -13 },
+  { name: "CDMX — Av Masaryk",       data: [-18,-35,-2,-2,-3,4,-34,-10,-11,14,-24,23,19,27,-24,-16],            ytd: -1  },
+  { name: "CDMX — Moliere PdH",      data: [2,-24,-12,-41,-8,-18,-19,-6,-8,-14,2,-7,-16,6,-14,27],              ytd: -1  },
+  { name: "CDMX — Perisur PdH",      data: [-6,-46,-3,-34,-18,1,-31,16,-26,-28,-4,-7,-21,-15,13,-17],           ytd: -10 },
+  { name: "CDMX — Santa Fe PdH",     data: [-10,-30,-31,-38,-16,-34,-27,6,-6,7,-10,14,-11,13,16,14],            ytd:  7  },
+  { name: "Monterrey — PdH",         data: [1,-29,-50,-51,-28,-27,-34,-24,-34,-45,-39,-49,-32,-4,28,0],         ytd: -6  },
+  { name: "Oranjestad — Aruba",      data: [6,-13,-19,-9,1,4,6,28,8,22,17,2,7,7,18,39],                        ytd:  17 },
+  { name: "Panama — Multiplaza",     data: [-7,-18,-33,-21,-6,-8,-8,-24,-13,-4,28,-1,-7,-3,35,9],               ytd:  7  },
+  { name: "Puebla — PdH",            data: [-20,-25,-22,-31,-15,-16,-19,-5,-52,-21,-24,-11,-16,-15,14,3],       ytd: -4  },
+  { name: "Queretaro — PdH",         data: [10,-16,-18,-23,-18,-19,-25,-6,-40,-26,-26,-28,-30,-26,-7,-23],      ytd: -22 },
+  { name: "San Juan — Puerto Rico",  data: [-21,-27,-21,-25,-24,-3,22,16,42,-7,5,0,5,18,-2,33],                ytd:  15 },
+  { name: "Veracruz — PdH",          data: [6,-6,-14,1,-22,-25,-22,-10,-6,-16,-4,-12,-23,-26,-11,-3],           ytd: -16 },
+  { name: "Villahermosa — PdH",      data: [-27,-24,-16,-25,20,-50,-55,-58,-5,-25,-3,-23,17,23,-27,16],         ytd:  5  },
+];
+
+function cls(v) {
+  if (v === null) return 'null';
+  if (v > 20)  return 'vpos';
+  if (v > 10)  return 'pos';
+  if (v > 0)   return 'lpos';
+  if (v === 0) return 'zero';
+  if (v > -10) return 'lneg';
+  if (v > -25) return 'neg';
+  return 'vneg';
+}
+
+function fmt(v) {
+  if (v === null) return '—';
+  return (v >= 0 ? '+' : '') + v + '%';
+}
+
+const tbody = document.getElementById('tbody');
+stores.forEach(s => {
+  const tr = document.createElement('tr');
+  let html = `<td class="store-name">${s.name}</td>`;
+  s.data.forEach(v => {
+    html += `<td class="${cls(v)}">${fmt(v)}</td>`;
+  });
+  html += `<td class="ytd ${cls(s.ytd)}">${fmt(s.ytd)}</td>`;
+  tr.innerHTML = html;
+  tbody.appendChild(tr);
+});
+</script>
+</body>
+</html>
