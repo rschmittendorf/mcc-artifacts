@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GucciCore — Cruise 2027 Team Vote</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080808;
+      --bg-card: #111111;
+      --gold: #B8962E;
+      --gold-light: #D4B96A;
+      --cream: #F5F0E8;
+      --gray: #888888;
+      --gray-light: #555555;
+      --red: #C0392B;
+      --border: #1E1E1E;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--cream);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── SECTIONS ─── */
+    .section { display: none; }
+    .section.active { display: block; }
+    #section-landing.active { display: flex; }
+
+    /* ─── LANDING ─── */
+    #section-landing {
+      min-height: 100vh;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #section-landing::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 20%, rgba(184,150,46,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .landing-eyebrow {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 40px;
+    }
+
+    .landing-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(64px, 12vw, 120px);
+      line-height: 0.9;
+      letter-spacing: -2px;
+      color: var(--cream);
+      margin-bottom: 6px;
+    }
+
+    .landing-title em {
+      font-style: italic;
+      color: var(--gold-light);
+    }
+
+    .landing-sub {
+      font-size: 10px;
+      letter-spacing: 7px;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 56px;
+    }
+
+    .landing-rule {
+      width: 1px;
+      height: 56px;
+      background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+      margin: 0 auto 56px;
+    }
+
+    .landing-copy {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 19px;
+      font-weight: 300;
+      line-height: 1.75;
+      color: rgba(245,240,232,0.65);
+      max-width: 520px;
+      margin: 0 auto 64px;
+    }
+
+    .name-wrap {
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto 48px;
+    }
+
+    .name-label {
+      display: block;
+      font-size: 9px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 14px;
+    }
+
+    .name-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(184,150,46,0.3);
+      padding: 10px 0;
+      color: var(--cream);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 300;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.3s;
+      letter-spacing: 1px;
+    }
+    .name-input::placeholder { color: rgba(245,240,232,0.18); }
+    .name-input:focus { border-bottom-color: var(--gold); }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 18px 60px;
+      border: 1px solid var(--gold);
+      background: transparent;
+      color: var(--gold);
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.25s, color 0.25s;
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--gold);
+      color: var(--bg);
+    }
+    .btn-primary:disabled {
+      opacity: 0.25;
+      cursor: not-allowed;
+    }
+
+    /* ─── VOTE HEADER (sticky) ─── */
+    .vote-header {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: rgba(8,8,8,0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .vh-left { display: flex; align-items: center; gap: 28px; }
+
+    .vh-step {
+      font-size: 9px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+
+    .vh-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 300;
+      line-height: 1;
+    }
+
+    .mode-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      border: 1px solid;
+      transition: all 0.3s;
+    }
+    .mode-pill.top5 {
+      border-color: rgba(184,150,46,0.4);
+      color: var(--gold);
+      background: rgba(184,150,46,0.08);
+    }
+    .mode-pill.worst {
+      border-color: rgba(192,57,43,0.4);
+      color: #E08080;
+      background: rgba(192,57,43,0.08);
+    }
+
+    .vh-counters { display: flex; align-items: center; gap: 36px; }
+
+    .counter { text-align: center; }
+    .counter-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 34px;
+      font-weight: 300;
+      line-height: 1;
+    }
+    .counter-num.gold { color: var(--gold); }
+    .counter-num.red  { color: var(--red); }
+    .counter-label {
+      font-size: 8px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-top: 2px;
+    }
+
+    /* ─── INSTRUCTION BAR ─── */
+    .instr-bar {
+      background: rgba(184,150,46,0.04);
+      border-bottom: 1px solid rgba(184,150,46,0.1);
+      padding: 13px 48px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray);
+      letter-spacing: 0.5px;
+      transition: all 0.3s;
+    }
+    .instr-bar strong { color: var(--cream); font-weight: 500; }
+
+    /* ─── LOOK GRID ─── */
+    .looks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 3px;
+      padding: 3px;
+    }
+
+    .look-card {
+      position: relative;
+      aspect-ratio: 2/3;
+      overflow: hidden;
+      cursor: pointer;
+      background: var(--bg-card);
+      user-select: none;
+    }
+
+    .look-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease, filter 0.3s ease;
+    }
+    .look-card:hover img { transform: scale(1.05); }
+
+    .look-overlay {
+      position: absolute;
+      inset: 0;
+      transition: background 0.25s;
+    }
+
+    .look-num-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(8,8,8,0.75);
+      color: var(--gray);
+      font-size: 10px;
+      letter-spacing: 1px;
+      padding: 3px 8px;
+      font-family: 'Inter', sans-serif;
+      backdrop-filter: blur(4px);
+    }
+
+    /* Top-5 state */
+    .look-card.is-top .look-overlay { background: rgba(184,150,46,0.14); }
+    .look-card.is-top { outline: 2px solid var(--gold); outline-offset: -2px; }
+
+    .rank-badge {
+      display: none;
+      position: absolute;
+      top: 10px; right: 10px;
+      width: 30px; height: 30px;
+      background: var(--gold);
+      color: var(--bg);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      font-weight: 500;
+      align-items: center;
+      justify-content: center;
+    }
+    .look-card.is-top .rank-badge { display: flex; }
+
+    /* Worst state */
+    .look-card.is-worst { outline: 2px solid var(--red); outline-offset: -2px; }
+    .look-card.is-worst .look-overlay { background: rgba(192,57,43,0.18); }
+
+    .worst-badge {
+      display: none;
+      position: absolute;
+      top: 10px; right: 10px;
+      background: var(--red);
+      color: white;
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 5px 9px;
+      font-family: 'Inter', sans-serif;
+    }
+    .look-card.is-worst .worst-badge { display: flex; }
+
+    /* Dimmed in worst mode (top5 cards that can't be selected as worst) */
+    .look-card.dimmed img { filter: brightness(0.25) saturate(0.3); }
+    .look-card.dimmed .look-overlay { background: transparent; }
+
+    /* ─── ACTION BAR (sticky bottom) ─── */
+    .action-bar {
+      position: sticky;
+      bottom: 0;
+      z-index: 200;
+      background: rgba(8,8,8,0.97);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      padding: 18px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .action-hint {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      color: var(--gray);
+      font-style: italic;
+    }
+
+    .action-btns { display: flex; gap: 12px; }
+
+    .btn-action {
+      padding: 14px 36px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--gray);
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.25s;
+      white-space: nowrap;
+    }
+    .btn-action:hover:not(:disabled) { border-color: var(--cream); color: var(--cream); }
+    .btn-action:disabled { opacity: 0.2; cursor: not-allowed; }
+    .btn-action.gold-btn {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .btn-action.gold-btn:hover:not(:disabled) {
+      background: var(--gold);
+      color: var(--bg);
+    }
+
+    /* ─── SUBMITTING OVERLAY ─── */
+    .submitting-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(8,8,8,0.92);
+      z-index: 1000;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+    }
+    .submitting-overlay.active { display: flex; }
+    .submitting-spinner {
+      width: 40px; height: 40px;
+      border: 1px solid rgba(184,150,46,0.2);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .submitting-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--cream);
+      font-style: italic;
+    }
+
+    /* ─── RESULTS ─── */
+    #section-results {
+      min-height: 100vh;
+      padding: 80px 48px;
+    }
+
+    .results-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+    .results-eyebrow {
+      font-size: 9px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+    .results-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(44px, 7vw, 80px);
+      font-weight: 300;
+      line-height: 0.95;
+      margin-bottom: 16px;
+    }
+    .results-title em { font-style: italic; color: var(--gold-light); }
+    .results-meta {
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--gray);
+    }
+
+    .results-block {
+      max-width: 1100px;
+      margin: 0 auto 96px;
+    }
+    .results-gender-label {
+      text-align: center;
+      font-size: 9px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+    .results-gender-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 48px;
+      font-weight: 300;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+    .results-gender-sub {
+      text-align: center;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 56px;
+    }
+
+    .podium {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 3px;
+      margin-bottom: 3px;
+    }
+
+    .podium-item { position: relative; }
+
+    .podium-rank {
+      text-align: center;
+      font-size: 9px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .podium-rank-1 { color: var(--gold-light); }
+    .podium-rank-2, .podium-rank-3 { color: var(--gray); }
+
+    .podium-img {
+      aspect-ratio: 2/3;
+      overflow: hidden;
+      position: relative;
+    }
+    .podium-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .podium-item:first-child .podium-img { outline: 1px solid var(--gold); }
+
+    .vote-chip {
+      position: absolute;
+      bottom: 12px; right: 12px;
+      background: var(--gold);
+      color: var(--bg);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      padding: 5px 12px;
+    }
+    .podium-item:first-child .vote-chip { background: var(--gold-light); }
+
+    .podium-look-num {
+      text-align: center;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-top: 10px;
+    }
+
+    /* Worst section under podium */
+    .worst-section {
+      margin-top: 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .worst-label {
+      font-size: 9px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--red);
+    }
+    .worst-img-wrap {
+      width: 220px;
+      aspect-ratio: 2/3;
+      overflow: hidden;
+      position: relative;
+      outline: 1px solid var(--red);
+    }
+    .worst-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .worst-vote-chip {
+      position: absolute;
+      bottom: 10px; right: 10px;
+      background: var(--red);
+      color: white;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 5px 10px;
+    }
+    .worst-look-num {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    .results-divider {
+      width: 1px;
+      height: 80px;
+      background: linear-gradient(to bottom, transparent, var(--border), transparent);
+      margin: 0 auto 96px;
+    }
+
+    .results-loading {
+      text-align: center;
+      padding: 100px 48px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-style: italic;
+      color: var(--gray);
+    }
+
+    .thank-you-note {
+      text-align: center;
+      margin-top: 80px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+    }
+    .thank-you-note p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-style: italic;
+      color: var(--gray);
+    }
+    .thank-you-note strong { color: var(--cream); font-style: normal; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      .vote-header { padding: 14px 20px; flex-wrap: wrap; gap: 10px; }
+      .vh-counters { gap: 20px; }
+      .instr-bar { padding: 12px 20px; }
+      .looks-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+      .action-bar { padding: 14px 20px; flex-wrap: wrap; }
+      .action-btns { width: 100%; justify-content: flex-end; }
+      #section-results { padding: 48px 20px; }
+      .podium { grid-template-columns: 1fr; gap: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     LANDING
+══════════════════════════════════════ -->
+<section id="section-landing" class="section active">
+  <div class="landing-eyebrow">Kering · Internal — Team Vote</div>
+
+  <h1 class="landing-title">Gucci<em>Core</em></h1>
+  <div class="landing-sub">Cruise 2027 · New York City · May 2026</div>
+
+  <div class="landing-rule"></div>
+
+  <p class="landing-copy">
+    Alessandro Michele brought GucciCore to New York — a collision of Roman grandeur,
+    downtown energy, and obsessive maximalism. Browse every look from the Cruise 2027
+    show and cast your team vote.
+  </p>
+
+  <div class="name-wrap">
+    <label class="name-label" for="voter-name">Your name</label>
+    <input class="name-input" id="voter-name" type="text"
+           placeholder="First name" autocomplete="off" maxlength="40">
+  </div>
+
+  <button class="btn-primary" id="btn-start" onclick="startVoting()" disabled>
+    Begin Voting
+  </button>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     WOMEN'S VOTE
+══════════════════════════════════════ -->
+<section id="section-w" class="section">
+  <div class="vote-header">
+    <div class="vh-left">
+      <div>
+        <div class="vh-step">Step 1 of 2</div>
+        <div class="vh-title">Women's Edit</div>
+      </div>
+      <div class="mode-pill top5" id="w-mode-pill">Top 5</div>
+    </div>
+    <div class="vh-counters">
+      <div class="counter">
+        <div class="counter-num gold" id="w-top5-count">0</div>
+        <div class="counter-label">of 5 picks</div>
+      </div>
+      <div class="counter">
+        <div class="counter-num red" id="w-worst-count">—</div>
+        <div class="counter-label">worst look</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="instr-bar" id="w-instr">
+    <strong>Click a look</strong> to add it to your top 5 — click again to remove it.
+  </div>
+
+  <div class="looks-grid" id="w-grid"></div>
+
+  <div class="action-bar">
+    <div class="action-hint" id="w-hint">Select 5 looks you love most</div>
+    <div class="action-btns">
+      <button class="btn-action" id="w-worst-btn" onclick="enterWorstMode('w')" disabled>
+        Mark worst look →
+      </button>
+      <button class="btn-action gold-btn" id="w-next-btn" onclick="goToMen()" disabled>
+        Continue to Men's →
+      </button>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     MEN'S VOTE
+══════════════════════════════════════ -->
+<section id="section-m" class="section">
+  <div class="vote-header">
+    <div class="vh-left">
+      <div>
+        <div class="vh-step">Step 2 of 2</div>
+        <div class="vh-title">Men's Edit</div>
+      </div>
+      <div class="mode-pill top5" id="m-mode-pill">Top 5</div>
+    </div>
+    <div class="vh-counters">
+      <div class="counter">
+        <div class="counter-num gold" id="m-top5-count">0</div>
+        <div class="counter-label">of 5 picks</div>
+      </div>
+      <div class="counter">
+        <div class="counter-num red" id="m-worst-count">—</div>
+        <div class="counter-label">worst look</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="instr-bar" id="m-instr">
+    <strong>Click a look</strong> to add it to your top 5 — click again to remove it.
+  </div>
+
+  <div class="looks-grid" id="m-grid"></div>
+
+  <div class="action-bar">
+    <div class="action-hint" id="m-hint">Select 5 looks you love most</div>
+    <div class="action-btns">
+      <button class="btn-action" id="m-worst-btn" onclick="enterWorstMode('m')" disabled>
+        Mark worst look →
+      </button>
+      <button class="btn-action gold-btn" id="m-submit-btn" onclick="submitVotes()" disabled>
+        Submit votes →
+      </button>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     RESULTS
+══════════════════════════════════════ -->
+<section id="section-results" class="section">
+  <div class="results-header">
+    <div class="results-eyebrow">GucciCore Cruise 2027 · Team Results</div>
+    <h2 class="results-title">The Team's<br><em>Verdict</em></h2>
+    <div class="results-meta" id="results-meta">Loading results…</div>
+  </div>
+  <div id="results-body">
+    <div class="results-loading">Tallying votes…</div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     SUBMITTING OVERLAY
+══════════════════════════════════════ -->
+<div class="submitting-overlay" id="submitting-overlay">
+  <div class="submitting-spinner"></div>
+  <div class="submitting-text">Recording your votes…</div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════ -->
+<script>
+// ─────────────────────────────────────────
+// CONFIGURATION
+// Replace this URL after deploying your Google Apps Script
+// ─────────────────────────────────────────
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxlQJ_IRLMb2ALiE6pBd_beMq0Xk19YHYTCb6grqZCOJvOmWlS20qUFeJYmPnkbv9Jb/exec';
+
+// ─────────────────────────────────────────
+// LOOK DATA
+// ─────────────────────────────────────────
+const LOOKS = {
+  w: [2,3,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,24,26,27,31,32,33,34,35,36,37,43,44,48,49,55,56,57,58,60,62,63],
+  m: [1,4,5,6,23,25,28,29,30,38,39,40,41,42,45,46,47,50,51,52,53,54,59,61]
+};
+
+const IMG_DIR = { w: 'W', m: 'M' };
+
+// ─────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────
+let voterName = '';
+const state = {
+  w: { top5: [], worst: null, mode: 'top5' },
+  m: { top5: [], worst: null, mode: 'top5' }
+};
+
+// ─────────────────────────────────────────
+// LANDING
+// ─────────────────────────────────────────
+const nameInput = document.getElementById('voter-name');
+const startBtn  = document.getElementById('btn-start');
+
+nameInput.addEventListener('input', () => {
+  startBtn.disabled = nameInput.value.trim().length < 2;
+});
+nameInput.addEventListener('keypress', e => {
+  if (e.key === 'Enter' && !startBtn.disabled) startVoting();
+});
+
+function startVoting() {
+  voterName = nameInput.value.trim();
+  showSection('section-w');
+  buildGrid('w');
+}
+
+// ─────────────────────────────────────────
+// SECTION NAVIGATION
+// ─────────────────────────────────────────
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0 });
+}
+
+// ─────────────────────────────────────────
+// GRID BUILDER
+// ─────────────────────────────────────────
+function buildGrid(g) {
+  const grid = document.getElementById(`${g}-grid`);
+  if (grid.children.length > 0) return; // Already built
+
+  LOOKS[g].forEach(n => {
+    const card = document.createElement('div');
+    card.className = 'look-card';
+    card.id = `${g}-card-${n}`;
+    card.dataset.look = n;
+    card.onclick = () => onCardClick(g, n);
+    card.innerHTML = `
+      <img src="Pics/${IMG_DIR[g]}/GG_Cruise_VOGUE_Look_${n}.jpg"
+           alt="Look ${n}" loading="lazy"
+           onerror="this.parentElement.style.opacity='0.4'">
+      <div class="look-overlay"></div>
+      <div class="look-num-badge">Look ${n}</div>
+      <div class="rank-badge"></div>
+      <div class="worst-badge">Worst</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ─────────────────────────────────────────
+// CARD INTERACTION
+// ─────────────────────────────────────────
+function onCardClick(g, n) {
+  const s = state[g];
+
+  if (s.mode === 'top5') {
+    const idx = s.top5.indexOf(n);
+    if (idx !== -1) {
+      s.top5.splice(idx, 1); // deselect
+    } else if (s.top5.length < 5) {
+      s.top5.push(n); // select
+    }
+  } else {
+    // worst mode — cannot pick a top5 look as worst
+    if (s.top5.includes(n)) return;
+    s.worst = (s.worst === n) ? null : n; // toggle
+  }
+
+  refreshGrid(g);
+  refreshUI(g);
+}
+
+// ─────────────────────────────────────────
+// GRID REFRESH
+// ─────────────────────────────────────────
+function refreshGrid(g) {
+  const s = state[g];
+  LOOKS[g].forEach(n => {
+    const card = document.getElementById(`${g}-card-${n}`);
+    const badge = card.querySelector('.rank-badge');
+    card.classList.remove('is-top', 'is-worst', 'dimmed');
+
+    const rank = s.top5.indexOf(n);
+    if (rank !== -1) {
+      card.classList.add('is-top');
+      badge.textContent = rank + 1;
+      if (s.mode === 'worst') card.classList.add('dimmed');
+    } else if (n === s.worst) {
+      card.classList.add('is-worst');
+    }
+  });
+}
+
+// ─────────────────────────────────────────
+// UI STATE REFRESH
+// ─────────────────────────────────────────
+function refreshUI(g) {
+  const s = state[g];
+  const n5 = s.top5.length;
+  const hasWorst = s.worst !== null;
+
+  // Counters
+  document.getElementById(`${g}-top5-count`).textContent = n5;
+  document.getElementById(`${g}-worst-count`).textContent = hasWorst ? '✓' : '—';
+
+  // Hint text
+  const hint = document.getElementById(`${g}-hint`);
+  if (s.mode === 'top5') {
+    hint.textContent = n5 < 5
+      ? `Select ${5 - n5} more look${5 - n5 !== 1 ? 's' : ''}`
+      : 'Great — now mark your least favorite';
+  } else {
+    hint.textContent = hasWorst ? 'Ready to continue' : 'Click the look that missed the mark';
+  }
+
+  // Worst mode button
+  const worstBtn = document.getElementById(`${g}-worst-btn`);
+  worstBtn.disabled = n5 < 5 || s.mode === 'worst';
+
+  // Continue / submit button
+  const nextBtn = document.getElementById(g === 'w' ? 'w-next-btn' : 'm-submit-btn');
+  nextBtn.disabled = n5 < 5 || !hasWorst;
+}
+
+// ─────────────────────────────────────────
+// WORST MODE
+// ─────────────────────────────────────────
+function enterWorstMode(g) {
+  state[g].mode = 'worst';
+
+  const pill = document.getElementById(`${g}-mode-pill`);
+  pill.className = 'mode-pill worst';
+  pill.textContent = 'Worst Look';
+
+  document.getElementById(`${g}-instr`).innerHTML =
+    `<strong>Click the look</strong> that missed the mark for you.`;
+
+  refreshGrid(g);
+  refreshUI(g);
+
+  // Smooth scroll back to top of grid
+  document.getElementById(`${g}-grid`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─────────────────────────────────────────
+// NAVIGATION
+// ─────────────────────────────────────────
+function goToMen() {
+  showSection('section-m');
+  buildGrid('m');
+}
+
+// ─────────────────────────────────────────
+// SUBMIT
+// ─────────────────────────────────────────
+async function submitVotes() {
+  document.getElementById('submitting-overlay').classList.add('active');
+
+  const payload = {
+    voterName,
+    timestamp: new Date().toISOString(),
+    wTop5: state.w.top5,
+    wWorst: state.w.worst,
+    mTop5: state.m.top5,
+    mWorst: state.m.worst
+  };
+
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
+    });
+  } catch (e) {
+    // no-cors silently fails — data still arrives
+    console.warn('Fetch error (votes likely still recorded):', e);
+  }
+
+  // Give the sheet a moment to process
+  await new Promise(r => setTimeout(r, 1200));
+
+  document.getElementById('submitting-overlay').classList.remove('active');
+  showSection('section-results');
+  loadResults();
+}
+
+// ─────────────────────────────────────────
+// RESULTS
+// ─────────────────────────────────────────
+async function loadResults() {
+  try {
+    const res = await fetch(APPS_SCRIPT_URL + '?action=results', {
+      redirect: 'follow',
+      cache: 'no-store'
+    });
+    const data = await res.json();
+    renderResults(data);
+  } catch (e) {
+    // Fallback: show the current voter's own picks
+    renderFallbackResults();
+  }
+}
+
+function renderResults(data) {
+  const { totalVotes, wTop3, mTop3, wWorst, mWorst } = data;
+
+  document.getElementById('results-meta').textContent =
+    `${totalVotes} ${totalVotes === 1 ? 'vote' : 'votes'} cast · Results update in real time`;
+
+  document.getElementById('results-body').innerHTML = `
+    <div class="results-block">
+      <div class="results-gender-label">Women</div>
+      <div class="results-gender-title">Women's Edit</div>
+      <div class="results-gender-sub">Top 3 looks by team vote</div>
+      ${podiumHTML(wTop3, 'W')}
+      ${worstHTML(wWorst, 'W')}
+    </div>
+    <div class="results-divider"></div>
+    <div class="results-block">
+      <div class="results-gender-label">Men</div>
+      <div class="results-gender-title">Men's Edit</div>
+      <div class="results-gender-sub">Top 3 looks by team vote</div>
+      ${podiumHTML(mTop3, 'M')}
+      ${worstHTML(mWorst, 'M')}
+    </div>
+    <div class="thank-you-note">
+      <p>Thank you, <strong>${esc(voterName)}</strong>. Your vote has been recorded.</p>
+    </div>
+  `;
+}
+
+function renderFallbackResults() {
+  document.getElementById('results-meta').textContent =
+    'Your vote has been recorded — live results will appear here as more votes come in.';
+
+  const wPicks = state.w.top5.slice(0, 3).map(l => ({ look: l, count: null }));
+  const mPicks = state.m.top5.slice(0, 3).map(l => ({ look: l, count: null }));
+
+  document.getElementById('results-body').innerHTML = `
+    <div class="results-block">
+      <div class="results-gender-label">Women</div>
+      <div class="results-gender-title">Your Women's Picks</div>
+      <div class="results-gender-sub">Your top 3</div>
+      ${podiumHTML(wPicks, 'W')}
+    </div>
+    <div class="results-divider"></div>
+    <div class="results-block">
+      <div class="results-gender-label">Men</div>
+      <div class="results-gender-title">Your Men's Picks</div>
+      <div class="results-gender-sub">Your top 3</div>
+      ${podiumHTML(mPicks, 'M')}
+    </div>
+    <div class="thank-you-note">
+      <p>Thank you, <strong>${esc(voterName)}</strong>. Your vote has been recorded.</p>
+    </div>
+  `;
+}
+
+function podiumHTML(top3, dir) {
+  if (!top3 || top3.length === 0) {
+    return `<p style="text-align:center;color:var(--gray);font-style:italic;font-family:'Cormorant Garamond',serif;font-size:20px;padding:40px 0">No votes yet — be the first!</p>`;
+  }
+  const labels = ['1st Place', '2nd Place', '3rd Place'];
+  const rankClasses = ['podium-rank-1', 'podium-rank-2', 'podium-rank-3'];
+  return `<div class="podium">
+    ${top3.map((item, i) => `
+      <div class="podium-item">
+        <div class="podium-rank ${rankClasses[i] || ''}">${labels[i] || `#${i+1}`}</div>
+        <div class="podium-img">
+          <img src="Pics/${dir}/GG_Cruise_VOGUE_Look_${item.look}.jpg" alt="Look ${item.look}">
+          ${item.count !== null ? `<div class="vote-chip">${item.count} ${item.count === 1 ? 'vote' : 'votes'}</div>` : ''}
+        </div>
+        <div class="podium-look-num">Look ${item.look}</div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+function worstHTML(worst, dir) {
+  if (!worst) return '';
+  return `
+    <div class="worst-section">
+      <div class="worst-label">The Team's Least Favorite</div>
+      <div class="worst-img-wrap">
+        <img src="Pics/${dir}/GG_Cruise_VOGUE_Look_${worst.look}.jpg" alt="Look ${worst.look}">
+        ${worst.count !== null ? `<div class="worst-vote-chip">${worst.count} ${worst.count === 1 ? 'vote' : 'votes'}</div>` : ''}
+      </div>
+      <div class="worst-look-num">Look ${worst.look}</div>
+    </div>`;
+}
+
+function esc(str) {
+  return str.replace(/[&<>"']/g, c =>
+    ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+</script>
+</body>
+</html>
